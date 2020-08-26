@@ -13,9 +13,9 @@ import matplotlib
 import time
 
 # get file path
-file_path = os.getcwd()
+pd_file_path = os.path.join(sys.path[0], 'election_data_1976_2016', '1976-2016-president.csv')
 # read in CSV
-df = pd.read_csv(file_path+'/dataverse_files/1976-2016-president.csv')
+df = pd.read_csv(pd_file_path)
 # drop writeins
 df = df[df.writein != True]
 # drop irrelevant columns
@@ -88,7 +88,8 @@ def state_plotter(states, year, winner_dict, df, us_map=True):
 # if you're plotting bordering states and prefer to zoom in. 
 
     ### plot data on US map (https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.html)
-    usa = gpd.read_file(file_path+'/cb_2018_us_state_500k/cb_2018_us_state_500k.shp')
+    gpd_file_path = os.path.join(sys.path[0], 'shapefile_mapping', 'cb_2018_us_state_500k.shp')
+    usa = gpd.read_file(gpd_file_path)
 
     # drop mappings (including Alaska + Hawaii for aesthetics)
     usa = usa[(usa.NAME != 'United States Virgin Islands') & (usa.NAME != 'Guam') 
