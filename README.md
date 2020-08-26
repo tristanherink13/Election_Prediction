@@ -1,1 +1,1 @@
-# Election_Prediction
+Attempt to predict 2020 Presidential election.
