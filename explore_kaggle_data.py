@@ -23,8 +23,8 @@ class Dataset:
         return self.df_columns
 
 # instantiate objects
-test_object = Dataset(os.path.join(sys.path[0], 'kaggle_2016_dataset', 'test2016.csv'))
-train_object = Dataset(os.path.join(sys.path[0], 'kaggle_2016_dataset', 'train2016.csv'))
+test_object = Dataset(os.path.join(sys.path[0], 'Datasets', 'kaggle_2016_dataset', 'test2016.csv'))
+train_object = Dataset(os.path.join(sys.path[0], 'Datasets', 'kaggle_2016_dataset', 'train2016.csv'))
 
 # convert object to df
 test_df = test_object.convert_to_df()
