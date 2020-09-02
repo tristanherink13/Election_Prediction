@@ -154,8 +154,8 @@ class PlotHistoricalData(StatePlotter):
                     self.final_usa[self.final_usa.STUSPS == state].plot(ax=self.ax, color=self.dem_color, edgecolor='black', linewidth=self.line_thick).axis('off')
             else:
                 if self.usa.loc[self.usa['STUSPS'] == state]['WINNER'].values[0] == 'BLUE':
-                    self.usa[self.usa.STUSPS == state].plot(ax=self.ax, color=self.rep_color, edgecolor='b', linewidth=self.line_thick)
+                    self.usa[self.usa.STUSPS == state].plot(ax=self.ax, color=self.rep_color, edgecolor='black', linewidth=self.line_thick).axis('off')
                 elif self.usa.loc[self.usa['STUSPS'] == state]['WINNER'].values[0] == 'RED':
-                    self.usa[self.usa.STUSPS == state].plot(ax=self.ax, color=self.dem_color, edgecolor='r', linewidth=self.line_thick)
+                    self.usa[self.usa.STUSPS == state].plot(ax=self.ax, color=self.dem_color, edgecolor='black', linewidth=self.line_thick).axis('off')
 
         plt.show()
