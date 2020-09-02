@@ -29,7 +29,6 @@ class HistoricalStateVotingCalculations(Calculations):
         self.rep_state_percentage = 0
         self.total_dem_electoral_votes = 0
         self.total_rep_electoral_votes = 0
-        self.total_electoral_votes = 0
         self.dem_candidate = ''
         self.rep_candidate = ''
         self.dem_pop_vote = 0
@@ -38,6 +37,9 @@ class HistoricalStateVotingCalculations(Calculations):
         self.state_ordered_list = []
         self.electoral_votes_ordered_list = []
         self.winner_dict = {}
+        self.alpha_ordered_states = []
+        self.alpha_ordered_colors = []
+        self.alpha_ordered_electoral_votes = []
 
         print('calculating winner per state and overall winner...')
 
@@ -100,11 +102,13 @@ class HistoricalStateVotingCalculations(Calculations):
 
         # create winner series and group df to ascertain popular vote count for both parties
         winner_series = pd.Series(self.winner_dict[self.year])
+        self.alpha_ordered_states = list(winner_series.index)
+        self.alpha_ordered_colors = list(winner_series.values)
 
         # create dict and series for alphanumerically ordered states and votes
-        alpha_ordered_states = list(winner_series.index)
-        electoral_dict = dict(zip(alpha_ordered_states, electoral_votes_per_state))
+        electoral_dict = dict(zip(self.alpha_ordered_states, electoral_votes_per_state))
         votes_series = pd.Series(electoral_dict)
+        self.alpha_ordered_electoral_votes = list(votes_series.values)
 
         # create ordered lists to merge into geopandas df
         [self.winner_ordered_list.append(winner) for abbrev in self.usa['STUSPS'] for state, winner in winner_series.items() if state == abbrev]
@@ -119,11 +123,11 @@ class HistoricalStateVotingCalculations(Calculations):
                 self.total_rep_electoral_votes += self.electoral_votes_ordered_list[i]
         
         # calculate electoral vote breakdown
-        self.total_electoral_votes = self.total_dem_electoral_votes + self.total_rep_electoral_votes
+        total_electoral_votes = self.total_dem_electoral_votes + self.total_rep_electoral_votes
         self.dem_states_won = self.winner_ordered_list.count('BLUE')
         self.rep_states_won = self.winner_ordered_list.count('RED')
-        self.dem_state_percentage = round(self.total_dem_electoral_votes/self.total_electoral_votes*100,2)
-        self.rep_state_percentage = round(self.total_rep_electoral_votes/self.total_electoral_votes*100,2)
+        self.dem_state_percentage = round(self.total_dem_electoral_votes/total_electoral_votes*100,2)
+        self.rep_state_percentage = round(self.total_rep_electoral_votes/total_electoral_votes*100,2)
 
         # identify dem/rep candidates
         year_winner_grouping = self.election_data_1976_2016.year_winner_grouping
