@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import matplotlib
 
-from ingest_datasets import ElectionData
-from perform_calculations import StateVotingCalculations
+from election_data import ElectionData
+from historical_state_voting_calculations import HistoricalStateVotingCalculations
 
 class StatePlotter:
 
@@ -14,9 +14,9 @@ class StatePlotter:
     def __init__(self, year):
         self.year = year
         # get StateVotingCalculations attributes
-        self.calculations = StateVotingCalculations()
+        self.calculations = HistoricalStateVotingCalculations()
         self.winner_method = self.calculations.determine_historical_winner(self.year)
-        self.winner_dict = self.calculations.winner_dict
+        #self.winner_dict = self.calculations.winner_dict
         self.unique_abbrevs = self.calculations.unique_abbrevs
         [self.main_states_list.append(st) for st in self.unique_abbrevs if st != 'AK' and st != 'HI']
         self.dem_pop_vote = self.calculations.dem_pop_vote
@@ -97,7 +97,7 @@ class PlotHistoricalData(StatePlotter):
         self.rep_state_legend = mpatches.Patch(color=self.rep_color, label='{} states won'.format(self.rep_states_won))
 
         # create legend for voting statistics by state
-        if self.dem_states_won > self.rep_states_won:
+        if self.dem_state_percentage > self.rep_state_percentage:
             self.third_legend = [self.dem_legend, self.dem_state_legend, self.rep_legend, self.rep_state_legend]
         else:
             self.third_legend = [self.rep_legend, self.rep_state_legend, self.dem_legend, self.dem_state_legend]
@@ -149,13 +149,13 @@ class PlotHistoricalData(StatePlotter):
         for state in self.main_states_list:
             if self.fortyeight:
                 if self.final_usa.loc[self.final_usa['STUSPS'] == state]['WINNER'].values[0] == 'BLUE':
-                    self.final_usa[self.final_usa.STUSPS == state].plot(ax=self.ax, color=self.rep_color, edgecolor='black', linewidth=self.line_thick).axis('off')
-                elif self.final_usa.loc[self.final_usa['STUSPS'] == state]['WINNER'].values[0] == 'RED':
                     self.final_usa[self.final_usa.STUSPS == state].plot(ax=self.ax, color=self.dem_color, edgecolor='black', linewidth=self.line_thick).axis('off')
+                elif self.final_usa.loc[self.final_usa['STUSPS'] == state]['WINNER'].values[0] == 'RED':
+                    self.final_usa[self.final_usa.STUSPS == state].plot(ax=self.ax, color=self.rep_color, edgecolor='black', linewidth=self.line_thick).axis('off')
             else:
                 if self.usa.loc[self.usa['STUSPS'] == state]['WINNER'].values[0] == 'BLUE':
-                    self.usa[self.usa.STUSPS == state].plot(ax=self.ax, color=self.rep_color, edgecolor='black', linewidth=self.line_thick).axis('off')
-                elif self.usa.loc[self.usa['STUSPS'] == state]['WINNER'].values[0] == 'RED':
                     self.usa[self.usa.STUSPS == state].plot(ax=self.ax, color=self.dem_color, edgecolor='black', linewidth=self.line_thick).axis('off')
+                elif self.usa.loc[self.usa['STUSPS'] == state]['WINNER'].values[0] == 'RED':
+                    self.usa[self.usa.STUSPS == state].plot(ax=self.ax, color=self.rep_color, edgecolor='black', linewidth=self.line_thick).axis('off')
 
         plt.show()
