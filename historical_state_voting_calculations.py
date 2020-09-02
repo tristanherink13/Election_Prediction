@@ -3,17 +3,16 @@ import pandas as pd
 from calculations import Calculations
 
 class HistoricalStateVotingCalculations(Calculations):
-    
-    def determine_historical_winner(self, year):
-        self.year = year
+
+    def create_state_winner_dictionary_by_year(self):
         # initialize local variables
         years = [1976, 1980, 1984, 1988, 1992, 1996, 2000, 2004, 2008, 2012, 2016]
         dem_votes_per_state = []
         rep_votes_per_state = []
-        dem_value_dict_list = []
-        rep_value_dict_list = []
         dem_value_dict = {}
         rep_value_dict = {}
+        dem_value_dict_list = []
+        rep_value_dict_list = []
         winner_list = []
         winner_dict_list = []
 
@@ -56,6 +55,9 @@ class HistoricalStateVotingCalculations(Calculations):
 
         # structure == {year:{state:winner}}
         self.winner_dict = dict(zip(years, winner_dict_list))
+    
+    def determine_historical_winner(self, year):
+        self.year = year
 
         # index votes/state based on input year
         electoral_votes_per_state_per_year_dict = self.electoral_votes.electoral_votes_per_state_per_year_dict
