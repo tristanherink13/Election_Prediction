@@ -1,14 +1,16 @@
 import argparse
 
-from plot_state_results import PlotHistoricalData
+from state_map import StateMap
 
 class MainProgram():
 
     def __init__(self, year):
         self.year = int(year)
-        plot_object = PlotHistoricalData(self.year)
+        plot_object = StateMap(self.year)
         plot_object.merge_historical_data_into_gpd()
-        plot_object.create_figure()
+        plot_object.create_legends()
+        plot_object.plot_legends()
+        plot_object.plot_states()
 
 def main():
     parser = argparse.ArgumentParser(description='Input a year and return figure of presidential election data')
