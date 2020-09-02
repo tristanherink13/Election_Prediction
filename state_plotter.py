@@ -1,6 +1,6 @@
 from historical_state_voting_calculations import HistoricalStateVotingCalculations
 
-class StatePlotter:
+class StatePlotter():
 
     def __init__(self, year):
         # initialize attributes
