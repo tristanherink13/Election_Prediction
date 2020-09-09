@@ -4,7 +4,7 @@ from dataset import Dataset
 class UrbanEducationData(Dataset):
 
     def read_urban_education_data(self):
-        # rural college complete (51x6)
+        # urban college complete (51x6)
         self.df = pd.read_csv(self.file_path)
 
     def group_data(self):
