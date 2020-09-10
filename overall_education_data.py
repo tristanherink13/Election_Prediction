@@ -2,10 +2,8 @@ import pandas as pd
 from dataset import Dataset
 
 class OverallEducationData(Dataset):
-
-    def read_overall_education_data(self):
-        # overall college complete (51x6)
-        self.df = pd.read_csv(self.file_path)
+    # overall college complete (51x6)
+    pass
 
     def group_data(self):
         # group by different attributes

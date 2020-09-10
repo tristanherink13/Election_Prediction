@@ -2,10 +2,7 @@ import pandas as pd
 from dataset import Dataset
 
 class RuralEducationData(Dataset):
-
-    def read_rural_education_data(self):
-        # rural college complete (51x6)
-        self.df = pd.read_csv(self.file_path)
+    # rural college complete (51x6)
 
     def group_data(self):
         # group by different attributes

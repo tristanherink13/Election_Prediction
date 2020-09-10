@@ -4,8 +4,7 @@ from dataset import Dataset
 class ElectionData(Dataset):
 
     def manipulate_election_data(self):
-        # convert to df, drop writeins and irrelevant columns, and rename column to match other dataset for merging
-        self.df = pd.read_csv(self.file_path)
+        # drop writeins and irrelevant columns, and rename column to match other dataset for merging
         self.df = self.df[self.df.writein != True]
         self.df = self.df.drop(columns=['state_cen', 'version', 'notes', 'writein', 'state_ic', 'office'])
         self.df = self.df.rename(columns = {'state_po':'STUSPS'})
