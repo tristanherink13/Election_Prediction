@@ -8,6 +8,7 @@ class StatePlotter():
         self.main_states_list = []
         # get HistoricalStateVotingCalculations attributes
         self.calculations = HistoricalStateVotingCalculations()
+        self.calculations.get_plotting_data()
         self.calculations.create_state_winner_dictionary_by_year()
         self.winner_method = self.calculations.determine_historical_winner(self.year)
         # set attributes
