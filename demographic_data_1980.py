@@ -1,4 +1,3 @@
-import pandas as pd
 from dataset import Dataset
 
 class DemographicData1980(Dataset):
