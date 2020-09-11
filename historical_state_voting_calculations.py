@@ -57,6 +57,7 @@ class HistoricalStateVotingCalculations(Calculations):
         self.winner_dict = dict(zip(years, winner_dict_list))
     
     def determine_historical_winner(self, year):
+        print('calculating winner per state and overall winner...')
         self.year = year
 
         # index votes/state based on input year
