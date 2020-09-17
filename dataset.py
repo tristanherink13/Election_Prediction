@@ -21,9 +21,20 @@ class Dataset:
             with open(self.file_path, 'r') as data:
                 self.electoral_votes_per_state_per_year_dict = ast.literal_eval(data.read())
     
-    def convert_states_to_acronyms(self):
+    def drop_state_column(self, df):
+        if 'State' in self.df.columns:
+            self.df = self.df.drop(columns=['State'])
+
+    '''
+    def convert_acronyms_to_states(self, df):
         state_acro_df = pd.read_csv(os.path.join(sys.path[0], 'Datasets', 'state_acronym.csv'))
         state_list = state_acro_df['State'].tolist()
         acro_list = state_acro_df['Acronym'].tolist()
+        code_list = state_acro_df['Code'].tolist()
+        df_columns_list = []
+        [df_columns_list.append(header.lower()) for header in self.df.columns.tolist()]
+
+        # convert acronyms to state names
         for i, state in enumerate(state_list):
             self.df = self.df.replace(acro_list[i], state)
+    '''
