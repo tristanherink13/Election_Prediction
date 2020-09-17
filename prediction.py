@@ -10,7 +10,8 @@ class Prediction(Calculations):
         # get Calculations attributes
         prediction_data_object = Calculations()
         prediction_data_object.get_prediction_data()
-        prediction_data_object.get_plotting_data()
+        # historical voting data
+        self.dem_rep_state_df = prediction_data_object.dem_rep_votes_df
         # education data
         self.overall_education_df = prediction_data_object.overall_education_df
         self.rural_education_df = prediction_data_object.rural_education_df
@@ -30,5 +31,38 @@ class Prediction(Calculations):
         self.demographic_df_2012 = prediction_data_object.demographic_df_2012
         self.demographic_df_2016 = prediction_data_object.demographic_df_2016
         self.demographic_df_2018 = prediction_data_object.demographic_df_2018
-        # historical voting data
-        self.rep_dem_state_df = pd.read_csv(os.path.join(sys.path[0], 'Datasets', 'election_data_1976_2016', 'dem_rep_state_votes.csv'))
+
+    def merge_prediction_data(self):
+        dem_rep_df = self.dem_rep_state_df
+        votes_df_1976 = dem_rep_df.loc[dem_rep_df['Year'] == 1976]
+        votes_df_1980 = dem_rep_df.loc[dem_rep_df['Year'] == 1980]
+        votes_df_1984 = dem_rep_df.loc[dem_rep_df['Year'] == 1984]
+        votes_df_1988 = dem_rep_df.loc[dem_rep_df['Year'] == 1988]
+        votes_df_1992 = dem_rep_df.loc[dem_rep_df['Year'] == 1992]
+        votes_df_1996 = dem_rep_df.loc[dem_rep_df['Year'] == 1996]
+        votes_df_2000 = dem_rep_df.loc[dem_rep_df['Year'] == 2000]
+        votes_df_2004 = dem_rep_df.loc[dem_rep_df['Year'] == 2004]
+        votes_df_2008 = dem_rep_df.loc[dem_rep_df['Year'] == 2008]
+        votes_df_2012 = dem_rep_df.loc[dem_rep_df['Year'] == 2012]
+        votes_df_2016 = dem_rep_df.loc[dem_rep_df['Year'] == 2016]
+
+        # create 1976 df
+        df_1976 = self.overall_education_df[['Code', 'Overall_Edu_1976']]
+        df_1976 = df_1976.merge(self.rural_education_df[['Code', 'Rural_Edu_1976']], on='Code')
+        df_1976 = df_1976.merge(self.urban_education_df[['Code', 'Urban_Edu_1976']], on='Code')
+        df_1976 = df_1976.merge(self.income_df[['Code', '1976_Median_Income']], on='Code')
+        df_1976 = df_1976.merge(self.demographic_df_1976[['Code', 'Age_Group_1976', 'Both_Sexes_1976']], on='Code')
+        df_1976 = df_1976.merge(votes_df_1976[['Code', 'Winner']], on='Code')
+        # create 1980 df
+        df_1980 = self.overall_education_df[['Code', 'Overall_Edu_1980']]
+        df_1980 = df_1980.merge(self.rural_education_df[['Code', 'Rural_Edu_1980']], on='Code')
+        df_1980 = df_1980.merge(self.urban_education_df[['Code', 'Urban_Edu_1980']], on='Code')
+        df_1980 = df_1980.merge(self.income_df[['Code', '1980_Median_Income']], on='Code')
+        df_1980 = df_1980.merge(self.demographic_df_1980[['Code', 'Age_Group_1980', 
+                               'Both_Sexes_1980', 'Male_1980', 'Female_1980']], on='Code')
+        df_1980 = df_1980.merge(votes_df_1980[['Code', 'Winner']], on='Code')
+
+        #####
+        # df2 = pd.DataFrame([[5, 6], [7, 8]], columns=list('AB'))
+        #df_1976 = pd.concat([df_1976,df2], axis=0, ignore_index=True)
+        #####
