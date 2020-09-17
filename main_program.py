@@ -9,12 +9,13 @@ class MainProgram():
 
     def __init__(self, year):
         self.year = int(year)
-        plot_object = StateMap(self.year)
-        plot_object.merge_historical_data_into_gpd()
-        plot_object.create_legends()
-        plot_object.plot_legends()
-        plot_object.plot_states()
+        #plot_object = StateMap(self.year)
+        #plot_object.merge_historical_data_into_gpd()
+        #plot_object.create_legends()
+        #plot_object.plot_legends()
+        #plot_object.plot_states()
         prediction_object = Prediction()
+        prediction_object.merge_prediction_data()
 
 def main():
     parser = argparse.ArgumentParser(description='Input a year and return figure of presidential election data')
