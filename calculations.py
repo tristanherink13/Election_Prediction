@@ -21,6 +21,7 @@ from demographic_data_2008 import DemographicData2008
 from demographic_data_2012 import DemographicData2012
 from demographic_data_2016 import DemographicData2016
 from demographic_data_2018 import DemographicData2018
+from all_prediction_data import AllPredictionData
 
 class Calculations():
 
@@ -96,29 +97,35 @@ class Calculations():
         self.income_df = self.income_data.df
         # get DemographicData1976 attributes
         self.demographics_1976 = DemographicData1976()
-        self.demographics_1976.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'age_1976.csv'))
+        #self.demographics_1976.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'age_1976.csv'))
+        self.demographics_1976.read_data(os.path.join(sys.path[0], 'Datasets', 'bucketized_prediction_data', 'demographic_buckets_1976.csv'))
         self.demographics_1976.convert_to_df()
         self.demographics_1976.drop_state_column(self.demographics_1976.df)
-        self.demographics_1976.bucketize_data(self.demographics_1976.df)
+        #self.demographics_1976.bucketize_data(self.demographics_1976.df)
         self.demographic_df_1976 = self.demographics_1976.df
         # get DemographicData1980 attributes
         self.demographics_1980 = DemographicData1980()
-        self.demographics_1980.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'age_sex_1980.csv'))
+        #self.demographics_1980.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'age_sex_1980.csv'))
+        self.demographics_1980.read_data(os.path.join(sys.path[0], 'Datasets', 'bucketized_prediction_data', 'demographic_buckets_1980.csv'))
         self.demographics_1980.convert_to_df()
         self.demographics_1980.drop_state_column(self.demographics_1980.df)
-        self.demographics_1980.bucketize_data(self.demographics_1980.df)
+        #self.demographics_1980.bucketize_data(self.demographics_1980.df)
         self.demographic_df_1980 = self.demographics_1980.df
         # get DemographicData1984 attributes
         self.demographics_1984 = DemographicData1984()
-        self.demographics_1984.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'age_sex_1984.csv'))
+        #self.demographics_1984.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'age_sex_1984.csv'))
+        self.demographics_1984.read_data(os.path.join(sys.path[0], 'Datasets', 'bucketized_prediction_data', 'demographic_buckets_1984.csv'))
         self.demographics_1984.convert_to_df()
         self.demographics_1984.drop_state_column(self.demographics_1984.df)
+        #self.demographics_1984.bucketize_data(self.demographics_1984.df)
         self.demographic_df_1984 = self.demographics_1984.df
         # get DemographicData1988 attributes
         self.demographics_1988 = DemographicData1988()
-        self.demographics_1988.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'age_sex_1988.csv'))
+        #self.demographics_1988.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'age_sex_1988.csv'))
+        self.demographics_1988.read_data(os.path.join(sys.path[0], 'Datasets', 'bucketized_prediction_data', 'demographic_buckets_1988.csv'))
         self.demographics_1988.convert_to_df()
         self.demographics_1988.drop_state_column(self.demographics_1988.df)
+        #self.demographics_1988.bucketize_data(self.demographics_1988.df)
         self.demographic_df_1988 = self.demographics_1988.df
         # get DemographicData1992 attributes
         self.demographics_1992 = DemographicData1992()
@@ -132,37 +139,48 @@ class Calculations():
         self.demographic_df_1996 = self.demographics_1996.df
         # get DemographicData2000 attributes
         self.demographics_2000 = DemographicData2000()
-        self.demographics_2000.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'age_sex_2000.csv'))
+        #self.demographics_2000.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'age_sex_2000.csv'))
+        self.demographics_2000.read_data(os.path.join(sys.path[0], 'Datasets', 'bucketized_prediction_data', 'demographic_buckets_2000.csv'))
         self.demographics_2000.convert_to_df()
         self.demographics_2000.drop_state_column(self.demographics_2000.df)
+        #self.demographics_2000.bucketize_data(self.demographics_2000.df)
         self.demographic_df_2000 = self.demographics_2000.df
         # get DemographicData2004 attributes
         self.demographics_2004 = DemographicData2004()
-        self.demographics_2004.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'age_sex_2004.csv'))
+        #self.demographics_2004.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'age_sex_2004.csv'))
+        self.demographics_2004.read_data(os.path.join(sys.path[0], 'Datasets', 'bucketized_prediction_data', 'demographic_buckets_2004.csv'))
         self.demographics_2004.convert_to_df()
         self.demographics_2004.drop_state_column(self.demographics_2004.df)
+        #self.demographics_2004.bucketize_data(self.demographics_2004.df)
         self.demographic_df_2004 = self.demographics_2004.df
         # get DemographicData2008 attributes
         self.demographics_2008 = DemographicData2008()
-        self.demographics_2008.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'age_sex_2008.csv'))
+        #self.demographics_2008.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'age_sex_2008.csv'))
+        self.demographics_2008.read_data(os.path.join(sys.path[0], 'Datasets', 'bucketized_prediction_data', 'demographic_buckets_2008.csv'))
         self.demographics_2008.convert_to_df()
         self.demographics_2008.drop_state_column(self.demographics_2008.df)
+        #self.demographics_2008.bucketize_data(self.demographics_2008.df)
         self.demographic_df_2008 = self.demographics_2008.df
         # get DemographicData2012 attributes
         self.demographics_2012 = DemographicData2012()
-        self.demographics_2012.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'age_race_sex_2012.csv'))
+        self.demographics_2012.read_data(os.path.join(sys.path[0], 'Datasets', 'bucketized_prediction_data', 'demographic_buckets_2012.csv'))
         self.demographics_2012.convert_to_df()
         self.demographics_2012.drop_state_column(self.demographics_2012.df)
         self.demographic_df_2012 = self.demographics_2012.df
         # get DemographicData2016 attributes
         self.demographics_2016 = DemographicData2016()
-        self.demographics_2016.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'age_race_sex_2016.csv'))
+        self.demographics_2016.read_data(os.path.join(sys.path[0], 'Datasets', 'bucketized_prediction_data', 'demographic_buckets_2016.csv'))
         self.demographics_2016.convert_to_df()
         self.demographics_2016.drop_state_column(self.demographics_2016.df)
         self.demographic_df_2016 = self.demographics_2016.df
         # get DemographicData2018 attributes
         self.demographics_2018 = DemographicData2018()
-        self.demographics_2018.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'age_race_sex_2018.csv'))
+        self.demographics_2018.read_data(os.path.join(sys.path[0], 'Datasets', 'bucketized_prediction_data', 'demographic_buckets_2018.csv'))
         self.demographics_2018.convert_to_df()
         self.demographics_2018.drop_state_column(self.demographics_2018.df)
         self.demographic_df_2018 = self.demographics_2018.df
+        # get AllPredictionData attributes
+        self.all_prediction_data = AllPredictionData()
+        self.all_prediction_data.read_data(os.path.join(sys.path[0], 'Datasets', 'bucketized_prediction_data', 'all_prediction_data.csv'))
+        self.all_prediction_data.convert_to_df()
+        self.all_prediction_df = self.all_prediction_data.df
