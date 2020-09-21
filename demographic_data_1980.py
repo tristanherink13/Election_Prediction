@@ -53,4 +53,5 @@ class DemographicData1980(Dataset):
             df_final = pd.concat([df_final, group], axis=0, ignore_index=True)
         # reorganize df and assign to class
         df_final = df_final.sort_values(['Code', 'Age_Group_1980'], ascending=[True, True])
+        df_final.to_csv('demographic_buckets_1980.csv', index=False)
         self.df = df_final

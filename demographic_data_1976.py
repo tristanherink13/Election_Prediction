@@ -12,4 +12,5 @@ class DemographicData1976(Dataset):
         sum_df = sum_series.to_frame().reset_index()
         keep_df = keep_df.append(sum_df, ignore_index = True)
         keep_df = keep_df.sort_values(['Code', 'Age_Group_1976'], ascending=[True, True])
+        keep_df.to_csv('demographic_buckets_1976.csv', index=False)
         self.df = keep_df
