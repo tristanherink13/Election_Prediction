@@ -22,6 +22,7 @@ from demographic_data_2012 import DemographicData2012
 from demographic_data_2016 import DemographicData2016
 from demographic_data_2018 import DemographicData2018
 from all_prediction_data import AllPredictionData
+from final_prediction_data import FinalPredictionData
 
 class Calculations():
 
@@ -183,4 +184,10 @@ class Calculations():
         self.all_prediction_data = AllPredictionData()
         self.all_prediction_data.read_data(os.path.join(sys.path[0], 'Datasets', 'bucketized_prediction_data', 'all_prediction_data.csv'))
         self.all_prediction_data.convert_to_df()
+        self.all_prediction_data
         self.all_prediction_df = self.all_prediction_data.df
+        # get FinalPredictionData attributes
+        self.final_prediction_data = FinalPredictionData()
+        self.final_prediction_data.read_data(os.path.join(sys.path[0], 'Datasets', 'final_cleaned_prediction_data.csv'))
+        self.final_prediction_data.convert_to_df()
+        self.final_prediction_df = self.final_prediction_data.df
