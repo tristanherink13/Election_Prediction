@@ -3,6 +3,27 @@ from calculations import Calculations
 import sys
 import os
 import pandas as pd
+import numpy as np
+from numpy import array
+from numpy import mean
+from numpy import std
+from numpy.core.umath_tests import inner1d
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import LinearSVC
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import SGDClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn import metrics
+import csv
+import _pickle
 
 class Prediction(Calculations):
     
@@ -32,6 +53,7 @@ class Prediction(Calculations):
         self.demographic_df_2016 = prediction_data_object.demographic_df_2016
         self.demographic_df_2018 = prediction_data_object.demographic_df_2018
         self.all_prediction_df = prediction_data_object.all_prediction_df
+        self.final_prediction_df = prediction_data_object.final_prediction_df
 
     def merge_prediction_data(self):
         dem_rep_df = self.dem_rep_state_df
@@ -175,5 +197,191 @@ class Prediction(Calculations):
                               df_2004, df_2008, df_2012, df_2016, df_2018], axis=0, ignore_index=True)
         final_df.to_csv('all_prediction_data.csv', index=False)
 
-    def run_model(self):
-        print(self.all_prediction_df)
+    def impute_missing_data(self):
+        # create prediction df
+        prediction_df = self.all_prediction_df
+        prediction_df = prediction_df[prediction_df.Sex != 0]
+        prediction_df = prediction_df[prediction_df.Ethnic_Origin != 0]
+
+        # average male/female breakdown to extrapolate data fields
+        average_male_percent = .492
+        average_female_percent = 1 - average_male_percent
+
+        # fill NaN values with U and assign national averages to each row
+        new_df = prediction_df.assign(Male_Population=prediction_df['Male_Population'].fillna('U'))
+        new_df = new_df.assign(Female_Population=new_df['Female_Population'].fillna('U'))
+
+        new_df = new_df.assign(
+                        Male_Population=new_df.apply(
+                        lambda row: int(round(row.Population*average_male_percent, 0))
+                        if row.Male_Population == 'U' else row.Male_Population, axis=1))
+        new_df = new_df.assign(
+                        Female_Population=new_df.apply(
+                        lambda row: int(round(row.Population*average_female_percent, 0))
+                        if row.Female_Population == 'U' else row.Female_Population, axis=1))
+
+        # get mode for each categorical feature
+        race_sex_mode = new_df['Race_Sex'].mode()
+        ethnic_origin_mode = new_df['Ethnic_Origin'].mode()
+        sex_mode = new_df['Sex'].mode()
+        race_mode = new_df['Race'].mode()
+
+        # convert NaN values into mode
+        new_df = new_df.assign(Race_Sex=new_df['Race_Sex'].fillna(race_sex_mode[0]))
+        new_df = new_df.assign(Ethnic_Origin=new_df['Ethnic_Origin'].fillna(ethnic_origin_mode[0]))
+        new_df = new_df.assign(Sex=new_df['Sex'].fillna(sex_mode[0]))
+        new_df = new_df.assign(Race=new_df['Race'].fillna(race_mode[0]))
+
+        # write final df to csv
+        new_df.to_csv('final_cleaned_prediction_data.csv', index=False)
+
+        # create 2020 prediction df using 2018 data
+        #final_2020_prediction_df = new_df[new_df['Winner'].isnull()]
+        #final_2020_prediction_df.to_csv('prediction_dataset_2020.csv', index=False)
+    
+    def compare_multiple_models(self):
+        ### 0 == Dem (BLUE), 1 == Rep (RED)
+        print('running models on dataset...')
+        # import cleaned and imputed df, perform final conversions
+        df = self.final_prediction_df
+        # create dfs for running model
+        final_df_data = df[df['Winner'].notnull()]
+        prediction_df_2020 = df[df['Winner'].isnull()]
+        #del prediction_df_2020['Winner']
+        #del prediction_df_2020['Year']
+
+        ### testing
+
+        final_df_data = final_df_data[final_df_data.Year != 1976]
+        final_df_data = final_df_data[final_df_data.Year != 1980]
+        final_df_data = final_df_data[final_df_data.Year != 1984]
+        #final_df_data = final_df_data[final_df_data.Year != 1988]
+        #final_df_data = final_df_data[final_df_data.Year != 1992]
+        #final_df_data = final_df_data[final_df_data.Year != 1996]
+        #final_df_data = final_df_data[final_df_data.Year != 2000]
+        #final_df_data = final_df_data[final_df_data.Year != 2004]
+        #final_df_data = final_df_data[final_df_data.Year != 2008]
+        #final_df_data = final_df_data[final_df_data.Year != 2012]
+
+
+        final_df_answer = final_df_data['Winner']
+        # create dictionary of all individual year data
+        years = [1976, 1980, 1984, 1988, 1992, 1996,
+            2000, 2004, 2008, 2012, 2016, 2020]
+        test_dict = {}
+        training_dict = {}
+        for year in years:
+            if year != 2020:
+                test_dict[year] = final_df_data.loc[final_df_data['Year'] == year]
+            else:
+                test_dict[year] = prediction_df_2020
+            training_dict[year] = final_df_data.loc[final_df_data['Year'] != year]
+        del final_df_data['Winner']
+        del final_df_data['Year']
+
+        # separate df into training and test data
+        x_train, x_test, y_train, self.y_test = train_test_split(final_df_data, final_df_answer, test_size=0.3, random_state=0)
+        #x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.25, random_state=0) # 0.25 x 0.8 = 0.2
+        
+        # instantiate models
+        lr = LogisticRegression()
+        rf = RandomForestClassifier(max_depth=7, random_state=13)
+        svc = make_pipeline(StandardScaler(),
+                            LinearSVC(random_state=13,
+                                      tol=1e-5,
+                                      loss='squared_hinge',
+                                      max_iter=100,
+                                      fit_intercept=False))
+                                      #class_weight='balanced'))
+
+        sgd = SGDClassifier(max_iter=1000, tol=1e-3)
+        knn = KNeighborsClassifier(n_neighbors=3)
+        bayes = GaussianNB()
+
+        # create varibles for looping through models and outputting results
+        models = [svc]#[lr, rf, svc, sgd, knn, bayes]
+        columns = ['Year', 'Logistic Regression', 'Random Forest', 'Support Vector Classification',
+                   'Stochastic Gradient Descent', 'K-Nearest Neighbors', 'Naive Bayes']
+        model_names = columns[1:]
+        filename = 'Election_Accuracy_9_28.csv'
+        counter = 0
+
+        # create results output file
+        with open(filename, 'w') as csvfile:   
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow(columns)
+        
+        years = [2008, 2012, 2016]#, 2020]#[2008, 2012, 2016]
+        # iterate through each individual model for each year
+        for year in years:
+            score_list = []
+            score_list.append(year)
+            y_train = training_dict[year]['Winner']
+            del training_dict[year]['Winner']
+            x_train = training_dict[year]
+            y_test = test_dict[year]['Winner']
+            del test_dict[year]['Winner']
+            x_test = test_dict[year]
+
+            for i, model in enumerate(models):
+                model.fit(x_train, y_train)
+                #predictions = model.predict(x_test)
+                #predictions_2020 = model.predict(x_test)
+                #pd.options.mode.chained_assignment = None
+                #prediction_df_2020['Winner'] = predictions_2020
+                #prediction_df_2020.to_csv('predictions.csv', index=False)
+                counter += 1
+                # Save model
+                #with open('churn_classifier_{}_{}.pkl'.format(model, counter), 'wb') as fid:
+                #    _pickle.dump(model, fid)
+                #print('done fitting {} model'.format(model_names[i]))
+                if year != 2020:
+                    score = model.score(x_test, y_test)
+                    score_list.append(round(score, 4))
+                    print('{}, {} performance: {}'.format(year, model_names[i], round(score, 4)))
+            
+            if year != 2020:
+                # write to results output file
+                with open(filename, 'a') as csvfile:   
+                    csvwriter = csv.writer(csvfile) 
+                    csvwriter.writerow(score_list)
+
+    def run_best_model(self):
+        print('running optimal model on dataset...')
+        # import cleaned and imputed df, perform final conversions
+        df = self.final_prediction_df
+        # create dfs for running model
+        final_df_data = df[df['Winner'].notnull()]
+        prediction_df_2020 = df[df['Winner'].isnull()]
+        del prediction_df_2020['Winner']
+        del prediction_df_2020['Year']
+        final_df_answer = final_df_data['Winner']
+        del final_df_data['Winner']
+        del final_df_data['Year']
+
+        # separate df into training and test data
+        #x_train, x_test, y_train, self.y_test = train_test_split(final_df_data, final_df_answer, test_size=0.3, random_state=0)
+        
+        # instantiate model
+        rf = RandomForestClassifier(max_depth=7, random_state=13)
+        
+        # fit model to training data, calculate score of test data, and predict 2020 election
+        rf.fit(x_train, y_train)
+        self.predictions = rf.predict(x_test)
+        self.score = rf.score(x_test, self.y_test)
+        predictions_2020 = rf.predict(prediction_df_2020)
+        pd.options.mode.chained_assignment = None
+        prediction_df_2020['Winner'] = predictions_2020
+        prediction_df_2020.to_csv('predictions.csv', index=False)
+
+    def plot_confusion_matrix(self):
+        print('plotting confusion matrix...')
+        # make seaborn confusion matrix
+        cm = metrics.confusion_matrix(self.y_test, self.predictions)
+        plt.figure(figsize=(9,9))
+        sns.heatmap(cm, annot=True, fmt=".3f", linewidths=.5, square = True, cmap = 'Blues_r')
+        plt.ylabel('Actual label')
+        plt.xlabel('Predicted label')
+        all_sample_title = 'Accuracy Score: {0}'.format(self.score)
+        plt.title(all_sample_title, size = 15)
+        plt.show()
