@@ -15,6 +15,8 @@ class HistoricalStateVotingCalculations(Calculations):
         rep_value_dict_list = []
         winner_list = []
         winner_dict_list = []
+        percent_win_list = []
+        percent_win_dict_list = []
 
         # get number of votes for each party/year/state
         year_party_grouping = self.election_data_1976_2016.year_party_grouping
@@ -43,18 +45,26 @@ class HistoricalStateVotingCalculations(Calculations):
             for state in dem_dict[yr]:
                 if dem_dict[yr][state] > rep_dict[yr][state]:
                     winner_list.append('BLUE')
+                    percent_win_list.append(round((dem_dict[yr][state])/
+                                           (dem_dict[yr][state]+rep_dict[yr][state])*100-50, 2))
                 elif dem_dict[yr][state] < rep_dict[yr][state]:
                     winner_list.append('RED')
+                    percent_win_list.append(round((rep_dict[yr][state])/
+                                           (rep_dict[yr][state]+dem_dict[yr][state])*100-50, 2))
                 else:
                     winner_list.append('NONE')
+                    percent_win_list.append(0)
 
         # put key value pair of {state:winner} in dict
         for i in range(0, len(winner_list), 51):
             self.winner_dict = dict(zip(self.unique_abbrevs, winner_list[i:i+51]))
+            self.percent_dict = dict(zip(self.unique_abbrevs, percent_win_list[i:i+51]))
             winner_dict_list.append(self.winner_dict)
+            percent_win_dict_list.append(self.percent_dict)
 
-        # structure == {year:{state:winner}}
+        # structure == {year:{state:winner}}, {year:{state:percent}}
         self.winner_dict = dict(zip(years, winner_dict_list))
+        self.percent_dict = dict(zip(years, percent_win_dict_list))
     
     def determine_historical_winner(self, year):
         print('calculating winner per state and overall winner...')
@@ -66,8 +76,10 @@ class HistoricalStateVotingCalculations(Calculations):
 
         # create winner series and group df to ascertain popular vote count for both parties
         winner_series = pd.Series(self.winner_dict[self.year])
+        percent_series = pd.Series(self.percent_dict[self.year])
         self.alpha_ordered_states = list(winner_series.index)
         self.alpha_ordered_colors = list(winner_series.values)
+        self.alpha_ordered_percents = list(percent_series.values)
 
         # create dict and series for alphanumerically ordered states and votes
         electoral_dict = dict(zip(self.alpha_ordered_states, electoral_votes_per_state))
@@ -78,6 +90,7 @@ class HistoricalStateVotingCalculations(Calculations):
         [self.winner_ordered_list.append(winner) for abbrev in self.usa['STUSPS'] for state, winner in winner_series.items() if state == abbrev]
         [self.state_ordered_list.append(state) for abbrev in self.usa['STUSPS'] for state, winner in winner_series.items() if state == abbrev]
         [self.electoral_votes_ordered_list.append(votes) for abbrev in self.usa['STUSPS'] for state, votes in votes_series.items() if state == abbrev]
+        [self.percent_ordered_list.append(percent) for abbrev in self.usa['STUSPS'] for state, percent in percent_series.items() if state == abbrev]
 
         # count up electoral votes for each state
         for i, state in enumerate(self.state_ordered_list):
