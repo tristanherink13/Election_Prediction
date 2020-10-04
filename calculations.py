@@ -3,6 +3,7 @@ import sys
 
 from election_data import ElectionData
 from electoral_votes_data import ElectoralVotesData
+from state_acronym_data import StateAcronymData
 from geopandas_data import GeopandasData
 from dem_rep_state_votes_data import DemRepStateVotesData
 from overall_education_data import OverallEducationData
@@ -21,8 +22,11 @@ from demographic_data_2008 import DemographicData2008
 from demographic_data_2012 import DemographicData2012
 from demographic_data_2016 import DemographicData2016
 from demographic_data_2018 import DemographicData2018
+from senate_votes import SenateVotes
+from house_votes import HouseVotes
 from all_prediction_data import AllPredictionData
 from final_prediction_data import FinalPredictionData
+from prediction_results import PredictionResults
 
 class Calculations():
 
@@ -41,16 +45,24 @@ class Calculations():
         self.winner_ordered_list = []
         self.state_ordered_list = []
         self.electoral_votes_ordered_list = []
+        self.percent_ordered_list = []
         self.winner_dict = {}
         self.alpha_ordered_states = []
         self.alpha_ordered_colors = []
         self.alpha_ordered_electoral_votes = []
 
-    def get_plotting_data(self):
         # get ElectoralVotesData attributes
         self.electoral_votes = ElectoralVotesData()
         self.electoral_votes.read_data(os.path.join(sys.path[0], 'Datasets', 'electoral_votes_per_state.txt'))
         self.electoral_votes.convert_to_df()
+        self.electoral_votes_dict = self.electoral_votes.electoral_votes_per_state_per_year_dict
+        # get StateAcronymData attributes
+        self.state_acronyms = StateAcronymData()
+        self.state_acronyms.read_data(os.path.join(sys.path[0], 'Datasets', 'state_acronym.csv'))
+        self.state_acronyms.convert_to_df()
+        self.state_acronym_df = self.state_acronyms.df
+
+    def get_plotting_data(self):
         # get GeopandasData attributes
         self.geopandas = GeopandasData()
         self.geopandas.read_data(os.path.join(sys.path[0], 'Datasets', 'shapefile_mapping', 'cb_2018_us_state_500k.shp'))
@@ -72,6 +84,9 @@ class Calculations():
         self.dem_rep_votes_data.convert_to_df()
         self.dem_rep_votes_data.drop_state_column(self.dem_rep_votes_data.df)
         self.dem_rep_votes_df = self.dem_rep_votes_data.df
+        df = self.dem_rep_votes_df
+        df['Winner'] = df['Winner'].astype('string')
+        self.dem_rep_votes_df = df
         # get OverallEducationData attributes
         self.overall_education = OverallEducationData()
         self.overall_education.read_data(os.path.join(sys.path[0], 'Datasets', 'college_complete_rural_urban_data', 'overall_college_complete_state.csv'))
@@ -180,14 +195,34 @@ class Calculations():
         self.demographics_2018.convert_to_df()
         self.demographics_2018.drop_state_column(self.demographics_2018.df)
         self.demographic_df_2018 = self.demographics_2018.df
+        # get SenateVotes attributes
+        self.senate_votes = SenateVotes()
+        self.senate_votes.read_data(os.path.join(sys.path[0], 'Datasets', 'election_data_1976_2016', '1976-2018-senate.csv'))
+        self.senate_votes.convert_to_df()
+        self.senate_votes.drop_state_column(self.senate_votes.df)
+        self.senate_votes.drop_senate_house_cols(self.senate_votes.df)
+        self.senate_votes_df = self.senate_votes.df
+        # get HouseVotes attributes
+        self.house_votes = HouseVotes()
+        self.house_votes.read_data(os.path.join(sys.path[0], 'Datasets', 'election_data_1976_2016', '1976-2018-house.csv'))
+        self.house_votes.convert_to_df()
+        self.house_votes.drop_state_column(self.house_votes.df)
+        self.house_votes.drop_senate_house_cols(self.house_votes.df)
+        self.house_votes_df = self.house_votes.df
+        '''
         # get AllPredictionData attributes
         self.all_prediction_data = AllPredictionData()
-        self.all_prediction_data.read_data(os.path.join(sys.path[0], 'Datasets', 'bucketized_prediction_data', 'all_prediction_data.csv'))
+        self.all_prediction_data.read_data(os.path.join(sys.path[0], 'Datasets', 'bucketized_prediction_data', 'all_prediction_data_9_29.csv'))
         self.all_prediction_data.convert_to_df()
-        self.all_prediction_data
         self.all_prediction_df = self.all_prediction_data.df
         # get FinalPredictionData attributes
         self.final_prediction_data = FinalPredictionData()
-        self.final_prediction_data.read_data(os.path.join(sys.path[0], 'Datasets', 'final_cleaned_prediction_data.csv'))
+        self.final_prediction_data.read_data(os.path.join(sys.path[0], 'Datasets', 'bucketized_prediction_data', 'final_cleaned_prediction_data_9_29.csv'))
         self.final_prediction_data.convert_to_df()
         self.final_prediction_df = self.final_prediction_data.df
+        '''
+        # get PredictionResults attributes
+        self.prediction_results = PredictionResults()
+        self.prediction_results.read_data(os.path.join(sys.path[0], 'Datasets', 'model_outcomes', 'predictions_97_rf_midterms.csv'))
+        self.prediction_results.convert_to_df()
+        self.prediction_results_df = self.prediction_results.df
