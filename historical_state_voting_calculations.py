@@ -71,7 +71,7 @@ class HistoricalStateVotingCalculations(Calculations):
         self.year = year
 
         # index votes/state based on input year
-        electoral_votes_per_state_per_year_dict = self.electoral_votes.electoral_votes_per_state_per_year_dict
+        electoral_votes_per_state_per_year_dict = self.electoral_votes_dict
         electoral_votes_per_state = electoral_votes_per_state_per_year_dict[self.year]
 
         # create winner series and group df to ascertain popular vote count for both parties
