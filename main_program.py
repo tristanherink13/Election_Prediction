@@ -15,7 +15,12 @@ class MainProgram():
         #plot_object.plot_legends()
         #plot_object.plot_states()
         prediction_object = Prediction()
-        prediction_object.run_model()
+        #prediction_object.merge_prediction_data()
+        #prediction_object.impute_missing_data()
+        #prediction_object.compare_multiple_models()
+        #prediction_object.run_best_model()
+        #prediction_object.plot_confusion_matrix()
+        #prediction_object.compute_results()
 
 def main():
     parser = argparse.ArgumentParser(description='Input a year and return figure of presidential election data')
