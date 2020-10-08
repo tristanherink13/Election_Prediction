@@ -24,7 +24,10 @@ class Dataset:
             self.gpd = gpd.read_file(self.file_path)
         elif short_file_name[-3:] == 'txt':
             with open(self.file_path, 'r') as data:
-                self.electoral_votes_per_state_per_year_dict = ast.literal_eval(data.read())
+                if 'electoral' in short_file_name:
+                    self.electoral_votes_per_state_per_year_dict = ast.literal_eval(data.read())
+                else:
+                    self.probable_outcomes_538_dict = ast.literal_eval(data.read())
     
     def drop_state_column(self, df):
         if 'State' in self.df.columns:
