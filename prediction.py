@@ -43,6 +43,8 @@ class Prediction(Calculations):
         self.electoral_votes_per_state_per_year_dict = prediction_data_object.electoral_votes_dict
         # acronym data
         self.state_acronym_df = prediction_data_object.state_acronym_df
+        # probable outcome 538 data
+        self.probable_outcomes_538_dict = prediction_data_object.probable_outcomes_538_dict
         # demographic data
         self.demographic_df_1976 = prediction_data_object.demographic_df_1976
         self.demographic_df_1980 = prediction_data_object.demographic_df_1980
@@ -58,9 +60,11 @@ class Prediction(Calculations):
         self.demographic_df_2018 = prediction_data_object.demographic_df_2018
         self.senate_votes_df = prediction_data_object.senate_votes_df
         self.house_votes_df = prediction_data_object.house_votes_df
+        '''
         # prediction df data
-        #self.all_prediction_df = prediction_data_object.all_prediction_df
-        #self.final_prediction_df = prediction_data_object.final_prediction_df
+        self.all_prediction_df = prediction_data_object.all_prediction_df
+        self.final_prediction_df = prediction_data_object.final_prediction_df
+        '''
         # prediction results data
         self.prediction_results_df = prediction_data_object.prediction_results_df
 
@@ -366,7 +370,7 @@ class Prediction(Calculations):
         columns = ['Year', 'Logistic Regression', 'Random Forest', 'Support Vector Classification',
                    'Stochastic Gradient Descent', 'K-Nearest Neighbors', 'Naive Bayes']
         model_names = columns[1:]
-        filename = 'Election_Accuracy_9_29.csv'
+        filename = 'Election_Accuracy_9_30.csv'
         counter = 0
 
         # create results output file
@@ -425,7 +429,7 @@ class Prediction(Calculations):
 
         # separate df into training and test data
         x_train, x_test, y_train, self.y_test = train_test_split(final_df_data, final_df_answer, test_size=0.3, random_state=0)
-        
+
         # instantiate model
         rf = RandomForestClassifier(max_depth=9, random_state=13)
         
@@ -482,19 +486,9 @@ class Prediction(Calculations):
         elif trump_counter > biden_counter:
             print('TRUMP WINS: {} to {}'.format(trump_counter, biden_counter))
 
-        # define Nate Silver 538 result percentages (as of 10/1)
-        blue_state_polls_dict = {'Arizona':62, 'California':99, 'Colorado':88, 'Connecticut':99,
-                            'Delaware':99, 'District of Columbia':99, 'Florida':58, 'Hawaii':99,
-                            'Illinois':99, 'Maine':88, 'Maryland':99, 'Massachusetts':99,
-                            'Michigan':86, 'Minnesota':88, 'Nevada':82, 'New Hampshire':77,
-                            'New Jersey':98, 'New Mexico':95, 'New York':99, 'North Carolina':53,
-                            'Ohio':52, 'Oregon':93, 'Pennsylvania':79, 'Rhode Island':99,
-                            'Vermont':99, 'Virginia':96, 'Washington':99, 'Wisconsin':81}
-        red_state_polls_dict = {'Alabama':97, 'Alaska':79, 'Arkansas':94, 'Georgia':59, 'Idaho':99,
-                        'Indiana':97, 'Iowa':63, 'Kansas':94, 'Kentucky':99, 'Louisiana':91,
-                        'Mississippi':87, 'Missouri':91, 'Montana':87, 'Nebraska':99,
-                        'North Dakota':99, 'Oklahoma':99, 'South Carolina':89, 'South Dakota':97,
-                        'Tennessee':96, 'Texas':72, 'Utah':97, 'West Virginia':99, 'Wyoming':99}
+        # import Nate Silver 538 result percentages (as of 10/1)
+        blue_state_polls_dict = self.probable_outcomes_538_dict[0]
+        red_state_polls_dict = self.probable_outcomes_538_dict[1]
 
         # initialize variables for results comparison
         blue_state_polls = list(blue_state_polls_dict.keys())
