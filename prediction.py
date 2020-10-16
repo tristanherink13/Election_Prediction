@@ -60,6 +60,7 @@ class Prediction(Calculations):
         self.demographic_df_2018 = prediction_data_object.demographic_df_2018
         self.senate_votes_df = prediction_data_object.senate_votes_df
         self.house_votes_df = prediction_data_object.house_votes_df
+        # uncomment if trying to run models - these datasets are large and take longer to load
         '''
         # prediction df data
         self.all_prediction_df = prediction_data_object.all_prediction_df
@@ -67,6 +68,7 @@ class Prediction(Calculations):
         '''
         # prediction results data
         self.prediction_results_df = prediction_data_object.prediction_results_df
+        self.pop_data_2020_df = prediction_data_object.pop_data_2020_df
 
     def merge_prediction_data(self):
         dem_rep_df = self.dem_rep_state_df
@@ -97,7 +99,6 @@ class Prediction(Calculations):
                            'Sen_Total_Votes', 'House_Party', 'House_Candidate_Votes',
                            'House_Total_Votes', 'Winner']
         df_1976.to_csv('output.csv', index=False)
-        
         # create 1980 df
         df_1980 = self.overall_education_df[['Code', 'Overall_Edu_1980']]
         df_1980 = df_1980.merge(self.rural_education_df[['Code', 'Rural_Edu_1980']], on='Code')
@@ -465,6 +466,10 @@ class Prediction(Calculations):
         df_2.sort_values('Code', inplace=True)
         df_2 = df_2.replace(1.0, 'RED')
         df_2 = df_2.replace(0.0, 'BLUE')
+        # import overall 2020 population for percent win calculations
+        pop_df = self.pop_data_2020_df
+        pop_df = pop_df.groupby(['Code'])['Population'].sum().reset_index()
+
         # import datasets to align with results
         electoral_votes_per_state_per_year_dict = self.electoral_votes_per_state_per_year_dict
         df_3 = self.state_acronym_df
@@ -474,17 +479,39 @@ class Prediction(Calculations):
         trump_counter = 0
         predicted_blue_states = []
         predicted_red_states = []
+        winner_dict_2020 = {}
+        percent_dict_2020 = {}
+        all_blue_votes = 0
+        all_red_votes = 0
+        dem_states_won = 0
+        rep_states_won = 0
+        # iterate through df and populate dicts for plotting
         for i, row in enumerate(df_2.values):
             if row[1].strip() == 'BLUE':
                 predicted_blue_states.append(df_3['State'][i])
+                winner_dict_2020[df_3['Acronym'][i]] = row[1].strip()
+                percent_dict_2020[df_3['Acronym'][i]] = round(
+                        (row[-1]/pop_df['Population'].iloc[i])*100-50,5)
+                all_blue_votes += int(row[-1])
                 biden_counter += electoral_votes_per_state_per_year_dict[2016][i]
+                dem_states_won += 1
             elif row[1].strip() == 'RED':
                 predicted_red_states.append(df_3['State'][i])
+                winner_dict_2020[df_3['Acronym'][i]] = row[1].strip()
+                percent_dict_2020[df_3['Acronym'][i]] = round(
+                        (row[-1]/pop_df['Population'].iloc[i])*100-50,5)
+                all_red_votes += int(row[-1])
                 trump_counter += electoral_votes_per_state_per_year_dict[2016][i]
-        if biden_counter > trump_counter:
-            print('BIDEN WINS: {} to {}'.format(biden_counter, trump_counter))
-        elif trump_counter > biden_counter:
-            print('TRUMP WINS: {} to {}'.format(trump_counter, biden_counter))
+                rep_states_won += 1
+
+        # extrapolated voting population to calculate number of voters for each candidate
+        voting_population_2020 = 129838306
+        blue_vote_percent = (all_blue_votes/(all_blue_votes+all_red_votes))
+        red_vote_percent = (all_red_votes/(all_blue_votes+all_red_votes))
+        dem_pop_vote = int(round(voting_population_2020*blue_vote_percent,0))
+        rep_pop_vote = int(round(voting_population_2020*red_vote_percent,0))
+        dem_state_percentage = round(dem_states_won/(dem_states_won + rep_states_won),2)
+        rep_state_percentage = round(rep_states_won/(dem_states_won + rep_states_won),2)
 
         # import Nate Silver 538 result percentages (as of 10/1)
         blue_state_polls_dict = self.probable_outcomes_538_dict[0]
@@ -549,9 +576,23 @@ class Prediction(Calculations):
                 elif state in red_state_polls:
                     disagree_list.append([state, red_state_polls_dict[state]])
 
+        # print election results
+        if biden_counter > trump_counter:
+            print('BIDEN WINS: {} to {}'.format(biden_counter, trump_counter))
+        elif trump_counter > biden_counter:
+            print('TRUMP WINS: {} to {}'.format(trump_counter, biden_counter))
+
         # print results of model vs 538 predictions
         print('DISAGREE ON: {}'.format(disagree_list))
         print('MIDDLE GROUND BLUE: {}'.format(middle_ground_blue_list))
         print('MIDDLE GROUND RED: {}'.format(middle_ground_red_list))
         print('BLUE STATES: {}'.format(predicted_blue_states))
         print('RED STATES: {}'.format(predicted_red_states))
+
+        # populate file with 2020 plotting results and write to output
+        output_list = [winner_dict_2020, percent_dict_2020, biden_counter, trump_counter,
+                       dem_states_won, rep_states_won, dem_state_percentage, rep_state_percentage,
+                       'Biden, Joe', 'Trump, Donald J.', dem_pop_vote, rep_pop_vote]
+        with open('election_results_list_2020.txt', 'w') as f:
+            for item in output_list:
+                f.write("%s\n" % item)
