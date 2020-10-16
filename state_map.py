@@ -94,16 +94,30 @@ class StateMap(StatePlotter):
 
         # create legend for close, or "swing", states
         for i, state in enumerate(alpha_ordered_states):
-            if alpha_ordered_percents[i] < 2 and alpha_ordered_colors[i] == 'BLUE':
-                percent_legend = mpatches.Patch(color=self.dem_color,
-                              label='{} : {}%'.format(state,
-                              alpha_ordered_percents[i]))
-                self.percent_legend_list.append(percent_legend)
-            elif alpha_ordered_percents[i] < 2 and alpha_ordered_colors[i] == 'RED':
-                percent_legend = mpatches.Patch(color=self.rep_color,
-                              label='{} : {}%'.format(state,
-                              alpha_ordered_percents[i]))
-                self.percent_legend_list.append(percent_legend)
+            if self.year != 2020:
+                if alpha_ordered_percents[i] < 2 and alpha_ordered_colors[i] == 'BLUE':
+                    percent_legend = mpatches.Patch(color=self.dem_color,
+                                                    label='{} : {}%'.format(state,
+                                                    alpha_ordered_percents[i]))
+                    self.percent_legend_list.append(percent_legend)
+                elif alpha_ordered_percents[i] < 2 and alpha_ordered_colors[i] == 'RED':
+                    percent_legend = mpatches.Patch(color=self.rep_color,
+                                                    label='{} : {}%'.format(state,
+                                                    alpha_ordered_percents[i]))
+                    self.percent_legend_list.append(percent_legend)
+            else:
+                if (2.2 <= alpha_ordered_percents[i] <= 3.5 or alpha_ordered_percents[i] < .1 
+                and alpha_ordered_colors[i] == 'BLUE'):
+                    percent_legend = mpatches.Patch(color=self.dem_color,
+                                                    label='{} : {}%'.format(state,
+                                                    alpha_ordered_percents[i]))
+                    self.percent_legend_list.append(percent_legend)
+                elif (2.2 <= alpha_ordered_percents[i] <+ 3.5 or alpha_ordered_percents[i] < .1 
+                and alpha_ordered_colors[i] == 'RED'):
+                    percent_legend = mpatches.Patch(color=self.rep_color,
+                                                    label='{} : {}%'.format(state,
+                                                    alpha_ordered_percents[i]))
+                    self.percent_legend_list.append(percent_legend)
 
     def plot_legends(self):
         # plot legends
