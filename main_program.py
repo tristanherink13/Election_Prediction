@@ -1,14 +1,29 @@
+import sys
 import argparse
 
-from plot_state_results import PlotHistoricalData
+from state_map import StateMap
+from calculations import Calculations
+from prediction import Prediction
 
 class MainProgram():
 
     def __init__(self, year):
         self.year = int(year)
-        plot_object = PlotHistoricalData(self.year)
+        plot_object = StateMap(self.year)
         plot_object.merge_historical_data_into_gpd()
-        plot_object.create_figure()
+        plot_object.create_legends()
+        plot_object.plot_legends()
+        plot_object.plot_states()
+        # prediction methods
+        '''
+        #prediction_object = Prediction()
+        #prediction_object.merge_prediction_data()
+        #prediction_object.impute_missing_data()
+        #prediction_object.compare_multiple_models()
+        #prediction_object.run_best_model()
+        #prediction_object.plot_confusion_matrix()
+        #prediction_object.compute_results()
+        '''
 
 def main():
     parser = argparse.ArgumentParser(description='Input a year and return figure of presidential election data')
@@ -17,12 +32,17 @@ def main():
 
     args = parser.parse_args()
     input_year = getattr(args, 'in')
+    valid_years = ['1976', '1980', '1984', '1988', '1992', '1996',
+                   '2000', '2004', '2008', '2012', '2016', '2020']
 
-    # use input_year, otherwise default to latest election (2016)
-    if input_year:
+    # use input_year, otherwise default to prediction (2020)
+    if not input_year:
+        MainProgram(2020)
+    elif input_year in valid_years:
         MainProgram(input_year)
-    else:
-        MainProgram(2016)
+    elif input_year not in valid_years:
+        print('Please input a valid election year from 1976-2016')
+        sys.exit()
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,18 @@
+[
+{
+'Arizona':62, 'California':99, 'Colorado':88, 'Connecticut':99,
+'Delaware':99, 'District of Columbia':99, 'Florida':58, 'Hawaii':99,
+'Illinois':99, 'Maine':88, 'Maryland':99, 'Massachusetts':99,
+'Michigan':86, 'Minnesota':88, 'Nevada':82, 'New Hampshire':77,
+'New Jersey':98, 'New Mexico':95, 'New York':99, 'North Carolina':53,
+'Ohio':52, 'Oregon':93, 'Pennsylvania':79, 'Rhode Island':99,
+'Vermont':99, 'Virginia':96, 'Washington':99, 'Wisconsin':81
+},
+{
+'Alabama':97, 'Alaska':79, 'Arkansas':94, 'Georgia':59, 'Idaho':99,
+'Indiana':97, 'Iowa':63, 'Kansas':94, 'Kentucky':99, 'Louisiana':91,
+'Mississippi':87, 'Missouri':91, 'Montana':87, 'Nebraska':99,
+'North Dakota':99, 'Oklahoma':99, 'South Carolina':89, 'South Dakota':97,
+'Tennessee':96, 'Texas':72, 'Utah':97, 'West Virginia':99, 'Wyoming':99
+}
+]
