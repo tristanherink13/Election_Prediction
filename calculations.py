@@ -4,7 +4,9 @@ import sys
 from plotting_data_classes.election_data import ElectionData
 from plotting_data_classes.electoral_votes_data import ElectoralVotesData
 from plotting_data_classes.state_acronym_data import StateAcronymData
+from plotting_data_classes.probable_outcomes_538 import ProbableOutcomes538
 from plotting_data_classes.geopandas_data import GeopandasData
+from plotting_data_classes.prediction_plotting_outputs_2020 import PredictionPlottingOutputs2020
 from prediction_data_classes.dem_rep_state_votes_data import DemRepStateVotesData
 from prediction_data_classes.overall_education_data import OverallEducationData
 from prediction_data_classes.rural_education_data import RuralEducationData
@@ -26,6 +28,7 @@ from prediction_data_classes.senate_votes import SenateVotes
 from prediction_data_classes.house_votes import HouseVotes
 from prediction_data_classes.all_prediction_data import AllPredictionData
 from prediction_data_classes.final_prediction_data import FinalPredictionData
+from prediction_data_classes.population_data_2020 import PopulationData2020
 from prediction_data_classes.prediction_results import PredictionResults
 
 class Calculations():
@@ -53,14 +56,19 @@ class Calculations():
 
         # get ElectoralVotesData attributes
         self.electoral_votes = ElectoralVotesData()
-        self.electoral_votes.read_data(os.path.join(sys.path[0], 'Datasets', 'electoral_votes_per_state.txt'))
+        self.electoral_votes.read_data(os.path.join(sys.path[0], 'Datasets', 'state_data', 'electoral_votes_per_state.txt'))
         self.electoral_votes.convert_to_df()
         self.electoral_votes_dict = self.electoral_votes.electoral_votes_per_state_per_year_dict
         # get StateAcronymData attributes
         self.state_acronyms = StateAcronymData()
-        self.state_acronyms.read_data(os.path.join(sys.path[0], 'Datasets', 'state_acronym.csv'))
+        self.state_acronyms.read_data(os.path.join(sys.path[0], 'Datasets', 'state_data', 'state_acronym.csv'))
         self.state_acronyms.convert_to_df()
         self.state_acronym_df = self.state_acronyms.df
+        # get ProbableOutcomes538 attributes
+        self.probable_outcomes = ProbableOutcomes538()
+        self.probable_outcomes.read_data(os.path.join(sys.path[0], 'Datasets', 'state_data', 'probable_outcomes_538.txt'))
+        self.probable_outcomes.convert_to_df()
+        self.probable_outcomes_538_dict = self.probable_outcomes.probable_outcomes_538_dict
 
     def get_plotting_data(self):
         # get GeopandasData attributes
@@ -76,6 +84,11 @@ class Calculations():
         self.election_data_1976_2016.manipulate_election_data()
         self.election_data_1976_2016.group_data()
         self.unique_abbrevs = self.election_data_1976_2016.df['STUSPS'].unique().tolist()
+        # get PredictionPlottingOutputs2020 attributes
+        self.prediction_plotting_outputs_2020 = PredictionPlottingOutputs2020()
+        self.prediction_plotting_outputs_2020.read_data(os.path.join(sys.path[0], 'Datasets', 'election_results_list_2020.txt'))
+        self.prediction_plotting_outputs_2020.convert_to_df()
+        self.prediction_outputs_list_2020 = self.prediction_plotting_outputs_2020.results_list
     
     def get_prediction_data(self):
         # get DemRepStateVotesData attributes
@@ -209,6 +222,7 @@ class Calculations():
         self.house_votes.drop_state_column(self.house_votes.df)
         self.house_votes.drop_senate_house_cols(self.house_votes.df)
         self.house_votes_df = self.house_votes.df
+        # uncomment if trying to run models - these datasets are large and take longer to load
         '''
         # get AllPredictionData attributes
         self.all_prediction_data = AllPredictionData()
@@ -221,6 +235,11 @@ class Calculations():
         self.final_prediction_data.convert_to_df()
         self.final_prediction_df = self.final_prediction_data.df
         '''
+        # get PopulationData2020 attributes
+        self.pop_data_2020 = PopulationData2020()
+        self.pop_data_2020.read_data(os.path.join(sys.path[0], 'Datasets', 'population_race_sex_data', 'population_2020.csv'))
+        self.pop_data_2020.convert_to_df()
+        self.pop_data_2020_df = self.pop_data_2020.df
         # get PredictionResults attributes
         self.prediction_results = PredictionResults()
         self.prediction_results.read_data(os.path.join(sys.path[0], 'Datasets', 'model_outcomes', 'predictions_97_rf_midterms.csv'))
