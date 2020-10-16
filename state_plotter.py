@@ -10,7 +10,10 @@ class StatePlotter():
         self.calculations = HistoricalStateVotingCalculations()
         self.calculations.get_plotting_data()
         self.calculations.create_state_winner_dictionary_by_year()
-        self.winner_method = self.calculations.determine_historical_winner(self.year)
+        if self.year != 2020:
+            self.calculations.determine_historical_winner(self.year)
+        else:
+            self.calculations.compile_2020_data()
         # set attributes
         self.winner_ordered_list = self.calculations.winner_ordered_list
         self.state_ordered_list = self.calculations.state_ordered_list
