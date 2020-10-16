@@ -13,6 +13,7 @@ class Dataset:
         short_file_name = self.file_path.split('/')[-1]
         print('importing {} dataset...'.format(short_file_name))
 
+        # handling for csvs
         if short_file_name[-3:] == 'csv':
             if 'prediction_data' in short_file_name:
                 self.df = pd.read_csv(self.file_path, encoding = 'ISO-8859-1', dtype=object)
@@ -20,12 +21,20 @@ class Dataset:
                 self.df = pd.read_csv(self.file_path)
             else:
                 self.df = pd.read_csv(self.file_path, encoding = 'ISO-8859-1')
+        # handling for shape files
         elif short_file_name[-3:] == 'shp':
             self.gpd = gpd.read_file(self.file_path)
+        # handling for txt files
         elif short_file_name[-3:] == 'txt':
             with open(self.file_path, 'r') as data:
                 if 'electoral' in short_file_name:
                     self.electoral_votes_per_state_per_year_dict = ast.literal_eval(data.read())
+                elif 'results_list' in short_file_name:
+                    self.results_list = []
+                    with open(self.file_path, 'r') as f:
+                        for line in f:
+                            new_line = line[:-1]
+                            self.results_list.append(new_line)
                 else:
                     self.probable_outcomes_538_dict = ast.literal_eval(data.read())
     
