@@ -86,7 +86,7 @@ class Calculations():
         self.unique_abbrevs = self.election_data_1976_2016.df['STUSPS'].unique().tolist()
         # get PredictionPlottingOutputs2020 attributes
         self.prediction_plotting_outputs_2020 = PredictionPlottingOutputs2020()
-        self.prediction_plotting_outputs_2020.read_data(os.path.join(sys.path[0], 'Datasets', 'election_results_list_2020.txt'))
+        self.prediction_plotting_outputs_2020.read_data(os.path.join(sys.path[0], 'Datasets', 'plotting_inputs_2020', 'election_results_list_2020.txt'))
         self.prediction_plotting_outputs_2020.convert_to_df()
         self.prediction_outputs_list_2020 = self.prediction_plotting_outputs_2020.results_list
     
