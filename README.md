@@ -5,5 +5,5 @@ Accomplishes two things:
 2) Attempts to predict and subsequently plot 2020 Presidential election results
    > python main_program.py
 
-![Philadelphia's Magic Gardens. This place was so cool!](/tristanherink/1992_Presidential_Results.jpg)
+![Philadelphia's Magic Gardens. This place was so cool!](Users/tristanherink/1992_Presidential_Results.jpg)
 
