@@ -1,3 +1,5 @@
 .DS_Store
 .vscode/
 __pycache__/
+plotting_data_classes/__pycache__/
+env/
