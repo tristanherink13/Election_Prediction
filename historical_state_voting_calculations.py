@@ -138,8 +138,8 @@ class HistoricalStateVotingCalculations(Calculations):
         self.total_rep_electoral_votes = output_list[3]
         self.dem_states_won = output_list[4]
         self.rep_states_won = output_list[5]
-        self.dem_state_percentage = float(output_list[6])*100
-        self.rep_state_percentage = float(output_list[7])*100
+        self.dem_state_percentage = round(float(output_list[6])*100,2)
+        self.rep_state_percentage = round(float(output_list[7])*100,2)
         self.dem_candidate = output_list[8]
         self.rep_candidate = output_list[9]
         self.dem_pop_vote = output_list[10]
