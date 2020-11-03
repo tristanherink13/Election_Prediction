@@ -510,8 +510,8 @@ class Prediction(Calculations):
         red_vote_percent = (all_red_votes/(all_blue_votes+all_red_votes))
         dem_pop_vote = int(round(voting_population_2020*blue_vote_percent,0))
         rep_pop_vote = int(round(voting_population_2020*red_vote_percent,0))
-        dem_state_percentage = round(dem_states_won/(dem_states_won + rep_states_won),2)
-        rep_state_percentage = round(rep_states_won/(dem_states_won + rep_states_won),2)
+        dem_state_percentage = round(biden_counter/(biden_counter + trump_counter),4)
+        rep_state_percentage = round(trump_counter/(biden_counter + trump_counter),4)
 
         # import Nate Silver 538 result percentages (as of 10/1)
         blue_state_polls_dict = self.probable_outcomes_538_dict[0]
